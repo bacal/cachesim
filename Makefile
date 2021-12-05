@@ -1,9 +1,14 @@
 CC=gcc
+FLAGS=-Wall -Wextra --pedantic -O0
 LINK=-largp
-FLAGS=-O0 -Wall --pedantic
 
-cachesim:main.o
-	${CC} $^ ${FLAGS} ${LINK} -o $@
-main.o: main.c
-	${CC} $^ ${FLAGS} ${LINK} -c -o $@
+all:cachesim
 
+cachesim:cachesim.o
+	${CC} $^ ${FLAGS} ${LINK} -o  $@
+
+cachesim.o:cachesim.c
+	${CC} $^ ${FLAGS} -c ${LINK} -o $@
+
+clean:
+	rm -f cachesim.o cachesim
