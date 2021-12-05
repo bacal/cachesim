@@ -1,5 +1,5 @@
 CC=gcc
-LINK=-largp
+LINK=
 FLAGS=-O0 -Wall --pedantic
 
 cachesim:main.o
