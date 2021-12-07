@@ -9,7 +9,7 @@ const char *argp_program_version = "cachesim 1.0.0";
 const char *argp_program_bug_address = "mesfinb2@vcu.edu";
 static char doc[] = "Cache Simulator for EGRE-426";
 static char args_doc[] = "[FILENAME]...";
-static struct argp_option options[] = { 
+static struct argp_option options[] = {
   { "bs"  ,  'b', "[BLOCK_SIZE]", 0, "Number of bytes in a block",0},
   { "nb"  ,  'n', "[NUM_OF_BLOCKS]", 0, "Number of blocks in the cache",0},
   { "associativity"  ,  'a', NULL, OPTION_ARG_OPTIONAL, "Associativity",0},
@@ -125,6 +125,7 @@ int main(int argc, char **argv)
   arguments.input_file = NULL;
   arguments.output_file = NULL;
   argp_parse(&argp, argc, argv, 0, 0, &arguments);
+
   FILE* fp = stdout;
   addresses = read_data(arguments.input_file);
   if(arguments.output_file){
@@ -144,6 +145,16 @@ int main(int argc, char **argv)
     printf("Cache size: %d\n",arguments.block_amount);
   printf("Reads: %d\n",addresses->count);
 
+  int offset_bits = log2(arguments.block_size);
+  int sets = log2(arguments.block_amount/arguments.block_size);
+  int tag_bits = 32-offset_bits-sets;
+  int hit =0;
+  int miss =0;
+  //(addresses->addresses[0] & (0x003 << tag_bits))>>tag_bits);
+  int tag = (0x80 & 1);
+
+
+  printf("addr=%x\ntag = %x\nset = %x\noffset=%x\n",0x0,0x0,0x0);
   fclose(fp);
 
   return 0;
