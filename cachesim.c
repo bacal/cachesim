@@ -132,7 +132,7 @@ int main(int argc, char **argv)
     fp = fopen(arguments.output_file, "w");
   }
   if(arguments.block_size)
-    printf("Block Size: %d\n", arguments.block_size);
+    fprintf(fp,"Block Size: %d\n", arguments.block_size);
   if(arguments.block_amount <= 0){
     fprintf(stderr,"Error: block size must be > 0\n");
     return 1;
@@ -142,8 +142,8 @@ int main(int argc, char **argv)
     return 1;
   }
   else
-    printf("Cache size: %d\n",arguments.block_amount);
-  printf("Reads: %d\n",addresses->count);
+    fprintf(fp,"Cache size: %d\n",arguments.block_amount);
+  fprintf(fp,"Reads: %d\n",addresses->count);
 
   int offset_bits = log2(arguments.block_size);
   int sets = log2(arguments.block_amount/arguments.block_size);
@@ -154,7 +154,7 @@ int main(int argc, char **argv)
   int tag = (0x80 & 1);
 
 
-  printf("addr=%x\ntag = %x\nset = %x\noffset=%x\n",0x0,0x0,0x0);
+  fprintf(fp,"addr=%x\ntag = %x\nset = %x\noffset=%x\n",0x0,0x0,0x0);
   fclose(fp);
 
   return 0;
