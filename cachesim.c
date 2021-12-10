@@ -101,7 +101,7 @@ int main(int argc, char **argv)
   cache* cache = create_cache(arguments.cache_size);
   
   fprintf(fp,"Cache size: %dk\n",arguments.cache_size/1024);
-  fprintf(fp,"Block Size: %d\n", arguments.block_size);
+  //fprintf(fp,"Block Size: %d\n", arguments.block_size);
   fprintf(fp,"Reads: %d\n",addresses->count);
 
   bit_sizes* bits = get_bit_sizes(arguments.block_amount,arguments.block_size);
@@ -137,14 +137,16 @@ int main(int argc, char **argv)
   */
 
   int hit_rate =0;
-  for(int i=0; i<addresses->count; i++){
-    printf("Adding address 0x%x to cache\n",addresses->addresses[i]);
+  for(int i=0; i<(int)addresses->count; i++){
+    //printf("Adding address 0x%x to cache\n",addresses->addresses[i]);
     if(add_to_cache(cache,addresses->addresses[i],bits)){
       hit_rate++;
     }
   }
-  fprintf(fp,"hits: %d\n",hit_rate);
-  
+  fprintf(fp,"Hits: %d\n",hit_rate);
+  fprintf(fp,"Misses: %d\n",addresses->count - hit_rate);
+  fprintf(fp,"Hit Rate: %.2f%%\n",((float)hit_rate/addresses->count)*100);
+  fprintf(fp,"Miss Rate: %.2f%%\n",(1-(float)hit_rate/addresses->count)*100);
   //  fp==stdout?fclose(fp):0;
   
   return 0;

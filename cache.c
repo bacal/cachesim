@@ -31,16 +31,16 @@ int add_to_cache(cache* c, int address,bit_sizes* s){
 
   //printf("index_size: %d, tag_size: %d, offset_size: %d\n",s->index_bits,s->tag_bits,s->offset_bits);
   //printf("cc->index = %d\n",cc->index);
-  printf("cc->index = %d\n",cc->index);
+  //printf("cc->index = %d\n",cc->index);
   if(!c->valid[cc->index]){
-    printf("Invalid tag!\n");
+    //printf("Invalid tag!\n");
     c->data[cc->index] = cc->tag;
     c->valid[cc->index] = 1;
     return 0;
   }
   else if(c->valid[cc->index]){
     if(c->data[cc->index] == cc->tag){
-      printf("Valid tag!\n");
+      //printf("Valid tag!\n");
       return 1;
     }
     else{
