@@ -7,9 +7,15 @@ struct raw_data{
   unsigned int count;
 };
 
-typedef struct CACHE_STRUCT{
+typedef struct SET_STRUCT{
+  int way;
   char* valid;
   unsigned int* data;
+}set;
+
+typedef struct CACHE_STRUCT{
+  set** data;
+  int associativity;
 }cache;
 
 typedef struct BIT_SIZES{
@@ -24,7 +30,11 @@ typedef struct CACHE_COMPONENTS_STRUCT{
   int offset;
 }cache_components;
 
-cache* create_cache(int);
+set* create_set(int);
+
+int add_to_set(set*,int);
+
+cache* create_cache(int,int);
 
 int add_to_cache(cache*,int,bit_sizes*);
 

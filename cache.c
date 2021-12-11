@@ -4,14 +4,23 @@
 #include <math.h>
 #include "cache.h"
 
-cache* create_cache(int cache_size){
+cache* create_cache(int cache_size, int associativity){
   
   cache* cache = malloc(sizeof(struct CACHE_STRUCT));
-  cache->valid = malloc(sizeof(char)*cache_size);
-  cache->data =  malloc(sizeof(int)*cache_size);
+  cache->associativity = associativity;
+  cache->data =  malloc(sizeof(struct SET_STRUCT)*cache_size);
   for(int i=0; i<cache_size; i++)
-    cache->valid[i] = 0;
+    cache->data[i] = create_set(associativity);
+  
   return cache;
+}
+
+set* create_set(int associativity){
+  set* s = malloc(sizeof(struct SET_STRUCT));
+  s->way = associativity;
+  s->data = malloc(sizeof(unsigned int)*s->way);
+  s->valid = malloc(sizeof(char)*s->way);
+  return s;
 }
 
 bit_sizes* get_bit_sizes(int block_amount,int block_size){
@@ -21,26 +30,25 @@ bit_sizes* get_bit_sizes(int block_amount,int block_size){
   bits->offset_bits = (int) log2(block_size);
   bits->tag_bits = 32-bits->index_bits-bits->offset_bits;
   return bits;
+}
 
+int add_to_set(set* s,int tag){
+  if(!s->valid[0]){
+    
 }
 
 int add_to_cache(cache* c, int address,bit_sizes* s){
   
   cache_components* cc = get_cache_components(address,s);
-  //printf("Address: 0x%x\n",address);
-
-  //printf("index_size: %d, tag_size: %d, offset_size: %d\n",s->index_bits,s->tag_bits,s->offset_bits);
-  //printf("cc->index = %d\n",cc->index);
-  //printf("cc->index = %d\n",cc->index);
-  if(!c->valid[cc->index]){
-    //printf("Invalid tag!\n");
-    c->data[cc->index] = cc->tag;
+  return add_to_set(c->data[cc->index],cc->tag); 
+  
+  /*if(!c->valid[cc->index]){
+    c->data[cc->index] =(unsigned int)cc->tag;
     c->valid[cc->index] = 1;
     return 0;
   }
   else if(c->valid[cc->index]){
-    if(c->data[cc->index] == cc->tag){
-      //printf("Valid tag!\n");
+    if(c->data[cc->index] == (unsigned int)cc->tag){
       return 1;
     }
     else{
@@ -48,7 +56,7 @@ int add_to_cache(cache* c, int address,bit_sizes* s){
       return 0;
     }
   }
-  return 0;
+  */
 }
   
 
@@ -67,6 +75,7 @@ char* int_to_binary_string(int a,int len){
   }
     return data;
 }
+
 int power_of_two(int num){
   if(num==0)
     return 0;
