@@ -51,7 +51,7 @@ int add_to_set(set* s,unsigned int tag){
   }
   srand(time(NULL));
   int index = rand();
-  s->data[index%s->way] = tag;
+  s->data[0] = tag;
   return 0;
 }
 
@@ -70,6 +70,7 @@ int add_to_cache(cache* c, int address,bit_sizes* s){
 	return 0;
       }
     }
+    return 0;
   }
    return add_to_set(c->data[cc->index],cc->tag); 
   
@@ -144,13 +145,13 @@ struct raw_data* read_data(const char* file_name){
   unsigned int* addresses = NULL;
   struct raw_data* data = malloc(sizeof(struct raw_data));
   if(!file_name){
-    fprintf(stderr, "cachesim: fatal error: must include a file name\n");
+    fprintf(stderr, "cachesim: error: must include a file name\n");
     exit(1);
   }
   else if(file_name){
     fp = fopen(file_name, "r");
     if(!fp){
-      fprintf(stderr, "cachesim: fatal error: failed to open file\n");
+      fprintf(stderr, "cachesim: error: %s: File not found\n",file_name);
       exit(1);
     }
 

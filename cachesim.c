@@ -25,6 +25,7 @@ static struct argp_option options[] = {
 struct arguments {
   char* input_file;
   char* output_file;
+  char** other_input_files;
   unsigned int cache_size;
   unsigned int block_size;
   unsigned int block_amount;
@@ -61,14 +62,19 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
       break;
 
     case ARGP_KEY_ARG:
-      arguments->input_file = arg;
+      if(!arguments->input_file)
+	arguments->input_file = arg;
+      arguments->other_input_files = &state->argv[state->next];
+      state->next = state->argc;
       break;
-
+      
     case ARGP_KEY_NO_ARGS:
       argp_usage(state);
       break;
 
     case ARGP_KEY_END:
+      if(arguments->input_file)
+	break;
       break;
 
     default: return ARGP_ERR_UNKNOWN;
@@ -90,6 +96,8 @@ int main(int argc, char **argv)
   arguments.output_file = NULL;
   arguments.cache_size = _640KiB;
   argp_parse(&argp, argc, argv, 0, 0, &arguments);
+  //for(int i=0; arguments.other_input_files[i] != NULL; i++)
+  //fprintf(stdout, "%s ", arguments.other_input_files[i]);
 
   FILE* fp = stdout;
   addresses = read_data(arguments.input_file);
