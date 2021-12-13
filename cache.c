@@ -19,12 +19,11 @@ cache* create_cache(int cache_size, int associativity){
 
 set* create_set(int associativity){
   set* s = malloc(sizeof(struct SET_STRUCT));
-  s->way = associativity;
+  s->way = associativity?associativity:1;
   s->data = malloc(sizeof(unsigned int)*s->way);
   s->valid = malloc(sizeof(char)*s->way);
   for(int i=0; i<s->way; i++)
     s->valid[i] = 0;
-  
   return s;
 }
 
@@ -37,7 +36,7 @@ bit_sizes* get_bit_sizes(int block_amount,int block_size){
   return bits;
 }
 
-int add_to_set(set* s,int tag){
+int add_to_set(set* s,unsigned int tag){
   for(int i=0; i<s->way; i++){
     if(!s->valid[i]){
       s->valid[i] = 1;
@@ -59,7 +58,20 @@ int add_to_set(set* s,int tag){
 int add_to_cache(cache* c, int address,bit_sizes* s){
   
   cache_components* cc = get_cache_components(address,s);
-  return add_to_set(c->data[cc->index],cc->tag); 
+  if(!c->associativity){
+    for(int i=0; i<c->size; i++){
+      if(c->data[i]->valid[0]){
+	if(c->data[i]->data[0] ==  cc->tag)
+	  return 1;
+      }
+      else if(!c->data[i]->valid[0]){
+	c->data[i]->data[0] = cc->tag;
+	c->data[i]->valid[0] = 1;
+	return 0;
+      }
+    }
+  }
+   return add_to_set(c->data[cc->index],cc->tag); 
   
     
   /*if(!c->valid[cc->index]){
@@ -112,7 +124,7 @@ cache_components* get_cache_components(unsigned int addr, bit_sizes* bits){
   c->tag = (addr>>(32-bits->tag_bits));
 
   unsigned int index_mask = 0;
-  for(int i=0; i<bits->index_bits; i++){
+  for(unsigned int i=0; i<bits->index_bits; i++){
     index_mask = index_mask | (1<<i);
   }
   index_mask = index_mask << bits->offset_bits;
@@ -120,7 +132,7 @@ cache_components* get_cache_components(unsigned int addr, bit_sizes* bits){
   c->index = c->index >> bits->offset_bits;
 
   unsigned int offset_mask = 0;
-  for(int i=0; i<bits->offset_bits; i++){
+  for(unsigned int i=0; i<bits->offset_bits; i++){
     offset_mask = offset_mask |(1<<i);
   }
   c->offset = addr&offset_mask;

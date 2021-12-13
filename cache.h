@@ -21,20 +21,20 @@ typedef struct CACHE_STRUCT{
 }cache;
 
 typedef struct BIT_SIZES{
-  int tag_bits;
-  int offset_bits;
-  int index_bits;
+  unsigned int tag_bits;
+  unsigned int offset_bits;
+  unsigned int index_bits;
 }bit_sizes;
 
 typedef struct CACHE_COMPONENTS_STRUCT{
-  int tag;
-  int index;
-  int offset;
+  unsigned int tag;
+  unsigned int index;
+  unsigned int offset;
 }cache_components;
 
 set* create_set(int);
 
-int add_to_set(set*,int);
+int add_to_set(set*,unsigned int);
 
 cache* create_cache(int,int);
 
