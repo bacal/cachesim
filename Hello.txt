@@ -1,6 +1,0 @@
-Cache size: 640k
-Reads: 10000
-Hits: 978
-Misses: 9022
-Hit Rate: 9.78%
-Miss Rate: 90.22%
