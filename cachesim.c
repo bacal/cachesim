@@ -17,7 +17,6 @@ static struct argp_option options[] = {
   { "block-size"  ,  'b', "[BLOCK_SIZE]", 0, "Number of bytes in a block",0},
   { "num-blocks"  ,  'n', "[NUM_OF_BLOCKS]", 0, "Number of blocks in the cache",0},
   { "associativity"  ,  'a', "[N-WAY]", 0, "Associativity",0},
-  { "LRU"  ,  'l', NULL, OPTION_ARG_OPTIONAL, "LRU policy",0},
   { "output"  ,  'o', "[FILE]", 0, "Output to a file instead of standard out",0},
   { "cache-size", 'c', "[CACHE_SIZE]", 0, "Set cache size",0},
   {0}
@@ -56,10 +55,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
 	arguments->associativity = atoi(arg);
       }
       break;
-    case 'l':
-      arguments->lru_policy = true;
-      break;
-
+      
     case 'c':
       arguments->cache_size = atoi(arg);
       break;

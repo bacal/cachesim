@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include "cache.h"
+#include <time.h>
 
 cache* create_cache(int cache_size, int associativity){
   
@@ -11,6 +12,7 @@ cache* create_cache(int cache_size, int associativity){
   cache->data =  malloc(sizeof(struct SET_STRUCT)*cache_size);
   for(int i=0; i<cache_size; i++)
     cache->data[i] = create_set(associativity);
+  cache->size = cache_size;
   
   return cache;
 }
@@ -20,6 +22,9 @@ set* create_set(int associativity){
   s->way = associativity;
   s->data = malloc(sizeof(unsigned int)*s->way);
   s->valid = malloc(sizeof(char)*s->way);
+  for(int i=0; i<s->way; i++)
+    s->valid[i] = 0;
+  
   return s;
 }
 
@@ -33,8 +38,22 @@ bit_sizes* get_bit_sizes(int block_amount,int block_size){
 }
 
 int add_to_set(set* s,int tag){
-  if(!s->valid[0]){
-    
+  for(int i=0; i<s->way; i++){
+    if(!s->valid[i]){
+      s->valid[i] = 1;
+      s->data[i] = tag;
+      return 0;
+    }
+    else if(s->valid[i]){
+      if(s->data[i] == tag){
+	return 1;
+      }
+    }  
+  }
+  srand(time(NULL));
+  int index = rand();
+  s->data[index%s->way] = tag;
+  return 0;
 }
 
 int add_to_cache(cache* c, int address,bit_sizes* s){
@@ -42,6 +61,7 @@ int add_to_cache(cache* c, int address,bit_sizes* s){
   cache_components* cc = get_cache_components(address,s);
   return add_to_set(c->data[cc->index],cc->tag); 
   
+    
   /*if(!c->valid[cc->index]){
     c->data[cc->index] =(unsigned int)cc->tag;
     c->valid[cc->index] = 1;

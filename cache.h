@@ -9,12 +9,14 @@ struct raw_data{
 
 typedef struct SET_STRUCT{
   int way;
+  int* lru;
   char* valid;
   unsigned int* data;
 }set;
 
 typedef struct CACHE_STRUCT{
   set** data;
+  int size;
   int associativity;
 }cache;
 
