@@ -59,9 +59,10 @@ int add_to_cache(cache* c, int address,bit_sizes* s){
   if(!c->associativity){
     for(int i=0; i<c->size; i++){
       if(c->data[i]->valid[0]){
-	if(c->data[i]->data[0] ==  cc->tag)
+	if(c->data[i]->data[0] ==  cc->tag){
 	  free(cc);
 	  return 1;
+	}
       }
       else if(!c->data[i]->valid[0]){
 	c->data[i]->data[0] = cc->tag;
@@ -70,7 +71,10 @@ int add_to_cache(cache* c, int address,bit_sizes* s){
 	return 0;
       }
     }
+    free(cc);
+    return 0;
   }
+  
   int res = add_to_set(c->data[cc->index],cc->tag);
   free(cc);
   return res;
@@ -173,4 +177,5 @@ struct raw_data* read_data(const char* file_name){
     fprintf(stderr, "cachesim: error: unknown error");
     exit(1);
   }
+  fclose(fp);
 }

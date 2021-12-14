@@ -37,58 +37,58 @@ struct arguments {
 static error_t parse_opt(int key, char *arg, struct argp_state *state) {
   struct arguments *arguments = state->input;
   switch (key) {
-    case 'o':
-      arguments->output_file = arg;
-      break;
-    case 'b':
-      arguments->block_size = atoi(arg);
-      if(atoi(arg) < 0){
-	fprintf(stderr,"%s: error: block size must be > 0\n",PROGRAM_NAME);
+  case 'o':
+    arguments->output_file = arg;
+    break;
+  case 'b':
+    arguments->block_size = atoi(arg);
+    if(atoi(arg) < 0){
+      fprintf(stderr,"%s: error: block size must be > 0\n",PROGRAM_NAME);
+      exit(1);
+    }
+    break;
+  case 'n':
+    arguments->block_amount = atoi(arg);
+    break;
+  case 'a':
+    if(!strcmp(arg,"fully")|| !strcmp(arg,"f")){
+      arguments->associativity = 0;
+    }
+    else if(!strcmp(arg,"direct") || !strcmp(arg,"d")){
+      arguments->associativity = 1;
+    }
+    else{
+      arguments->associativity = atoi(arg);
+      if(atoi(arg)< 0){
+	fprintf(stderr,"cahesim: error: associativity must be >0\n");
 	exit(1);
       }
+    }
+    break;
+    
+  case 'c':
+    arguments->cache_size = atoi(arg);
+    break;
+    
+  case ARGP_KEY_ARG:
+    if(!arguments->input_file)
+      arguments->input_file = arg;
+    arguments->other_input_files = &state->argv[state->next];
+    state->next = state->argc;
+    break;
+    
+  case ARGP_KEY_NO_ARGS:
+    argp_usage(state);
+    break;
+    
+  case ARGP_KEY_END:
+    if(arguments->input_file)
       break;
-    case 'n':
-      arguments->block_amount = atoi(arg);
-      break;
-    case 'a':
-      if(!strcmp(arg,"fully")|| !strcmp(arg,"f")){
-	arguments->associativity = 0;
-      }
-      else if(!strcmp(arg,"direct") || !strcmp(arg,"d")){
-	arguments->associativity = 1;
-      }
-      else{
-	arguments->associativity = atoi(arg);
-	if(atoi(arg)< 0){
-	  fprintf(stderr,"cahesim: error: associativity must be >0");
-	  exit(1);
-	}
-      }
-      break;
-      
-    case 'c':
-      arguments->cache_size = atoi(arg);
-      break;
-
-    case ARGP_KEY_ARG:
-      if(!arguments->input_file)
-	arguments->input_file = arg;
-      arguments->other_input_files = &state->argv[state->next];
-      state->next = state->argc;
-      break;
-      
-    case ARGP_KEY_NO_ARGS:
-      argp_usage(state);
-      break;
-
-    case ARGP_KEY_END:
-      if(arguments->input_file)
-	break;
-      break;
-
-    default: return ARGP_ERR_UNKNOWN;
+    break;
+    
+  default: return ARGP_ERR_UNKNOWN;
   }
-
+  
   return 0;
 }
 
@@ -110,14 +110,28 @@ int main(int argc, char **argv)
   //fprintf(stdout, "%s ", arguments.other_input_files[i]);
 
   FILE* fp = stdout;
+
+
+  if(!power_of_two(arguments.block_size)){
+    fprintf(stderr, "%s: error: Block size must be a power of two\n",PROGRAM_NAME);
+    return 1;
+  }
+
+  if(!power_of_two(arguments.block_amount)){
+    fprintf(stderr, "%s: error: Block amount must be a power of two\n",PROGRAM_NAME);
+    return 1;
+  }
+  
+  //int asc = arguments.associativity==0?1:arguments.associativity;
+
+  //if(asc*arguments.block_amount != arguments.block_size){
+  // fprintf(stderr, "%s: error: (associativity x number of sets) != number of blocks!\n",PROGRAM_NAME);
+  //  return 1;
+  //}
+  
   addresses = read_data(arguments.input_file);
   if(arguments.output_file){
     fp = fopen(arguments.output_file, "w");
-  }
-
-  if(!power_of_two(arguments.block_size)){
-    fprintf(stderr, "%s: error: Block size must be a power of two\n",argv[0]);
-    return 1;
   }
 
   cache* cache = create_cache(arguments.cache_size,arguments.associativity);
@@ -138,8 +152,11 @@ int main(int argc, char **argv)
   fprintf(fp,"Misses: %d\n",addresses->count - hit_rate);
   fprintf(fp,"Hit Rate: %.2f%%\n",((float)hit_rate/addresses->count)*100);
   fprintf(fp,"Miss Rate: %.2f%%\n",(1-(float)hit_rate/addresses->count)*100);
+
+  fp = fp==stdout?NULL:fp;
   
   delete_cache(cache);
   delete_raw_data(addresses);
+  free(bits);
   return 0;
 }

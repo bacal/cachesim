@@ -35,12 +35,6 @@ set* create_set(int);
 
 int add_to_set(set*,unsigned int);
 
-void delete_raw_data(struct raw_data* s);
-
-void delete_cache(cache* cache);
-
-void delete_set(set* set);
-
 cache* create_cache(int,int);
 
 int add_to_cache(cache*,int,bit_sizes*);
@@ -54,5 +48,11 @@ int power_of_two(int);
 cache_components* get_cache_components(unsigned int addr, bit_sizes* bits);
 
 struct raw_data* read_data(const char* file_name);
+
+void delete_raw_data(struct raw_data* s);
+
+void delete_cache(cache* cache);
+
+void delete_set(set* set);
 
 #endif /*_CACHESIM_CACHE_H_*/
