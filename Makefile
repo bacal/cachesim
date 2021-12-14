@@ -12,7 +12,7 @@ ${BIN}cachesim:${OBJ}cachesim.o ${OBJ}cache.o
 	${CC} $^ ${FLAGS} ${LINK} -largp -o $@
 
 linux:${OBJ}cachesim.o ${OBJ}cache.o
-	${CC} $^ ${FLAGS} ${LINK} -o ${BIN}cachesim
+	${CC} $^ ${FLAGS} ${LINK} -o ${BIN}cachesim -lm
 
 ${OBJ}cache.o:${SRC}cache.c
 	$(CC) $^ ${FLAGS} -I${INC} -c -o $@
