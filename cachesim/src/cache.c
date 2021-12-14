@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include "cache.h"
-#include <time.h>
+
 
 cache* create_cache(int cache_size, int associativity){
   
@@ -49,8 +49,6 @@ int add_to_set(set* s,unsigned int tag){
       }
     }  
   }
-  srand(time(NULL));
-  int index = rand();
   s->data[0] = tag;
   return 0;
 }
@@ -62,19 +60,34 @@ int add_to_cache(cache* c, int address,bit_sizes* s){
     for(int i=0; i<c->size; i++){
       if(c->data[i]->valid[0]){
 	if(c->data[i]->data[0] ==  cc->tag)
+	  free(cc);
 	  return 1;
       }
       else if(!c->data[i]->valid[0]){
 	c->data[i]->data[0] = cc->tag;
 	c->data[i]->valid[0] = 1;
+	free(cc);
 	return 0;
       }
     }
-    return 0;
   }
-   return add_to_set(c->data[cc->index],cc->tag); 
+  int res = add_to_set(c->data[cc->index],cc->tag);
+  free(cc);
+  return res;
 }
-  
+
+void delete_cache(cache* c){
+  for(int i=0; i<c->size; i++)
+    delete_set(c->data[i]);
+  free(c);
+}
+
+void delete_set(set* s){
+  free(s->data);
+  free(s->valid);
+  free(s);
+}
+
 
 
 char* int_to_binary_string(int a,int len){
@@ -89,7 +102,7 @@ char* int_to_binary_string(int a,int len){
       strcat(data, " ");
     }
   }
-    return data;
+  return data;
 }
 
 int power_of_two(int num){
@@ -122,7 +135,10 @@ cache_components* get_cache_components(unsigned int addr, bit_sizes* bits){
   c->offset = addr&offset_mask;
   return c;
 }
-
+void delete_raw_data(struct raw_data* rd){
+  free(rd->addresses);
+  free(rd);
+}
 struct raw_data* read_data(const char* file_name){
   FILE* fp;
   unsigned int* addresses = NULL;

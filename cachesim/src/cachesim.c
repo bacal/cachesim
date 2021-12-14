@@ -138,7 +138,8 @@ int main(int argc, char **argv)
   fprintf(fp,"Misses: %d\n",addresses->count - hit_rate);
   fprintf(fp,"Hit Rate: %.2f%%\n",((float)hit_rate/addresses->count)*100);
   fprintf(fp,"Miss Rate: %.2f%%\n",(1-(float)hit_rate/addresses->count)*100);
-  //  fp==stdout?fclose(fp):0;
   
+  delete_cache(cache);
+  delete_raw_data(addresses);
   return 0;
 }

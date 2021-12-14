@@ -1,20 +1,24 @@
 CC=gcc
 FLAGS=-Wall -Wextra --pedantic -O0 -g
 LINK:=-lm
+SRC=cachesim/src/
+INC=cachesim/include/
+OBJ=obj/
+BIN=bin/
 
-all:cachesim
+all:${BIN}cachesim
 
-cachesim:cachesim.o cache.o
+${BIN}cachesim:${OBJ}cachesim.o ${OBJ}cache.o
 	${CC} $^ ${FLAGS} ${LINK} -largp -o $@
 
-linux:cachesim.o cache.o
-	${CC} $^ ${FLAGS} ${LINK} -o cachesim
+linux:${OBJ}cachesim.o ${OBJ}cache.o
+	${CC} $^ ${FLAGS} ${LINK} -o ${BIN}cachesim
 
-cache.o:cache.c
-	$(CC) $^ ${FLAGS} -c -o $@
+${OBJ}cache.o:${SRC}cache.c
+	$(CC) $^ ${FLAGS} -I${INC} -c -o $@
 
-cachesim.o:cachesim.c
-	${CC} $^ ${FLAGS} -c -o $@
+${OBJ}cachesim.o:${SRC}cachesim.c
+	${CC} $^ ${FLAGS} -I${INC} -c -o $@
 
 clean:
-	rm -f cachesim.o cache.o cachesim
+	rm -f ${OBJ}cachesim.o ${OBJ}cache.o ${BIN}cachesim

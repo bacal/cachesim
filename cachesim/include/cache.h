@@ -9,7 +9,6 @@ struct raw_data{
 
 typedef struct SET_STRUCT{
   int way;
-  int* lru;
   char* valid;
   unsigned int* data;
 }set;
@@ -35,6 +34,12 @@ typedef struct CACHE_COMPONENTS_STRUCT{
 set* create_set(int);
 
 int add_to_set(set*,unsigned int);
+
+void delete_raw_data(struct raw_data* s);
+
+void delete_cache(cache* cache);
+
+void delete_set(set* set);
 
 cache* create_cache(int,int);
 
