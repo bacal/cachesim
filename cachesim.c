@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#define PROGRAM_NAME "cachesim"
 #include "cache.h"
 
 #define _64KiB 65536
@@ -41,6 +42,10 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
       break;
     case 'b':
       arguments->block_size = atoi(arg);
+      if(atoi(arg) < 0){
+	fprintf(stderr,"%s: error: block size must be > 0\n",PROGRAM_NAME);
+	exit(1);
+      }
       break;
     case 'n':
       arguments->block_amount = atoi(arg);
@@ -54,6 +59,10 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
       }
       else{
 	arguments->associativity = atoi(arg);
+	if(atoi(arg)< 0){
+	  fprintf(stderr,"cahesim: error: associativity must be >0");
+	  exit(1);
+	}
       }
       break;
       
@@ -95,6 +104,7 @@ int main(int argc, char **argv)
   arguments.input_file = NULL;
   arguments.output_file = NULL;
   arguments.cache_size = _640KiB;
+  arguments.associativity = 1;
   argp_parse(&argp, argc, argv, 0, 0, &arguments);
   //for(int i=0; arguments.other_input_files[i] != NULL; i++)
   //fprintf(stdout, "%s ", arguments.other_input_files[i]);

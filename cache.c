@@ -73,23 +73,6 @@ int add_to_cache(cache* c, int address,bit_sizes* s){
     return 0;
   }
    return add_to_set(c->data[cc->index],cc->tag); 
-  
-    
-  /*if(!c->valid[cc->index]){
-    c->data[cc->index] =(unsigned int)cc->tag;
-    c->valid[cc->index] = 1;
-    return 0;
-  }
-  else if(c->valid[cc->index]){
-    if(c->data[cc->index] == (unsigned int)cc->tag){
-      return 1;
-    }
-    else{
-      c->data[cc->index] = cc->tag;
-      return 0;
-    }
-  }
-  */
 }
   
 
